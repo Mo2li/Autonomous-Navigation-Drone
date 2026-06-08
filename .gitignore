@@ -1,0 +1,28 @@
+# Models (too large for GitHub)
+*.h5
+*.pkl
+*.pt
+*.pth
+
+# Data files
+*.npy
+*.mp4
+*.avi
+*.mov
+*.mkv
+video.mp4
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+# Generated images
+*.png
+rubric_addendum_model_comparison.png
+best_model_confusion_matrix.png
+
+# Environment
+.env
+venv/
+.venv/
