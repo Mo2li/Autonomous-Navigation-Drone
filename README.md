@@ -79,7 +79,6 @@ Video → Frame Extraction → Sequences of 5 frames
 ```
 Autonomous-Navigation-Drone/
 ├── Autonomous_Navigation_Drone_Final.ipynb          # Main training notebook (Colab)
-├── Autonomous_Navigation_Drone_Rubric_Addendum_No_Error.ipynb  # Analysis & rubric
 ├── app.py                                           # Streamlit web application
 ├── train_models.py                                  # Local training script (no Colab needed)
 ├── model_cnn_baseline.h5                            # ┐
