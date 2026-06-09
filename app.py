@@ -4,6 +4,10 @@ import cv2
 import os
 import tempfile
 import shutil
+
+# Always resolve model/data files relative to this file's folder,
+# regardless of the working directory the app is launched from.
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 import tensorflow as tf
 from tensorflow.keras import layers, Model
 from tensorflow.keras.applications import MobileNetV2

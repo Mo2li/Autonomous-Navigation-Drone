@@ -78,15 +78,23 @@ Video → Frame Extraction → Sequences of 5 frames
 
 ```
 Autonomous-Navigation-Drone/
-├── Autonomous_Navigation_Drone_Final.ipynb          # Main training notebook
+├── Autonomous_Navigation_Drone_Final.ipynb          # Main training notebook (Colab)
 ├── Autonomous_Navigation_Drone_Rubric_Addendum_No_Error.ipynb  # Analysis & rubric
 ├── app.py                                           # Streamlit web application
+├── train_models.py                                  # Local training script (no Colab needed)
+├── model_cnn_baseline.h5                            # ┐
+├── model_cnn_rnn.h5                                 # │
+├── model_cnn_lstm.h5                                # │ Pre-trained models
+├── model_cnn_gru.h5                                 # │ (app runs out-of-the-box)
+├── model_cnn_transformer.h5                         # │
+├── model_drone_info.h5                             # ┘
 ├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
-> **Note:** Trained model files (`.h5`) and data files (`.npy`, `.mp4`) are excluded from the repository due to size. Run the notebook to generate them.
+> **Note:** The trained `.h5` models are included, so the app runs immediately after `pip install`.
+> Large data/video files (`.npy`, `.mp4`) are excluded — regenerate them with `train_models.py`.
 
 ---
 
@@ -103,21 +111,23 @@ cd Autonomous-Navigation-Drone
 pip install -r requirements.txt
 ```
 
-### 3. Train the models
-
-> ⚠️ **The training notebook is designed for Google Colab** (uses `yt-dlp`, `ffmpeg`, and GPU).
-> It can run locally but requires `ffmpeg` installed on your system.
-
-Open and run `Autonomous_Navigation_Drone_Final.ipynb` (recommended on Colab) to:
-- Scrape the video dataset from YouTube via `yt-dlp`
-- Extract frames and build sequences
-- Train all 5 models
-- Save model files (`.h5`) and data arrays (`.npy`)
-
-### 4. Launch the Streamlit app
+### 3. Launch the Streamlit app
+The pre-trained models are included, so you can run the app right away:
 ```bash
 streamlit run app.py
 ```
+
+### (Optional) Re-train the models
+Two options:
+
+**A) Locally — no Colab needed** (uses an existing `video.mp4` in the folder):
+```bash
+python train_models.py
+```
+This regenerates all 6 `.h5` model files plus the cached `.npy` arrays.
+
+**B) On Google Colab** — run `Autonomous_Navigation_Drone_Final.ipynb`, which additionally
+scrapes the video dataset from YouTube via `yt-dlp` and downloads drone images.
 
 ---
 
