@@ -19,15 +19,17 @@ The system takes a short video sequence as input and predicts the drone's next n
 
 ## 🧠 Models Compared
 
-| Model | Architecture | Accuracy |
+| Model | Architecture | Val. Accuracy\* |
 |-------|-------------|----------|
-| CNN + LSTM | MobileNetV2 + LSTM(128) | **83.13%** 🥇 |
-| CNN + GRU | MobileNetV2 + GRU(128) | **83.13%** 🥇 |
-| CNN + RNN | MobileNetV2 + SimpleRNN(128) | 81.88% |
-| CNN + Transformer | MobileNetV2 + Multi-Head Attention | 80.00% |
-| CNN Baseline | Conv2D only (single frame) | 56.88% |
+| CNN + LSTM | MobileNetV2 + LSTM(128) | ~83% 🥇 |
+| CNN + GRU | MobileNetV2 + GRU(128) | ~83% 🥇 |
+| CNN + RNN | MobileNetV2 + SimpleRNN(128) | ~82% |
+| CNN + Transformer | MobileNetV2 + Multi-Head Attention | ~80% |
+| CNN Baseline | Conv2D only (single frame) | ~57% |
 
-> **Key finding:** Sequence models significantly outperform the CNN baseline, confirming that temporal information is critical for navigation prediction.
+> **Key finding (relative):** The recurrent sequence models (LSTM/GRU) consistently outperform the single-frame CNN baseline, which supports the core hypothesis — **temporal context matters** for navigation prediction.
+
+> \* ⚠️ **Read these as relative, not absolute.** Because the frames come from a *single continuous video* and the train/test split is random (not temporal), adjacent near-duplicate frames can appear in both sets — i.e. **temporal data leakage inflates the raw numbers**. The comparison *between* models is meaningful (all share the same split); the absolute accuracy is **not** a production-grade metric. See [Limitations](#-limitations).
 
 ---
 
@@ -146,21 +148,34 @@ scrapes the video dataset from YouTube via `yt-dlp` and downloads drone images.
 
 ## 📊 Dataset
 
-- **Source:** Video frames extracted from a drone navigation video
-- **Labeling:** Pseudo-labels generated using frame brightness heuristics
+- **Source:** Frames extracted from a **single** continuous navigation video
+- **Labeling:** Pseudo-labels generated using a frame-brightness heuristic (not human-annotated)
 - **Input:** Sequences of 5 consecutive frames (224×224×3)
-- **Split:** 80% train / 20% test
+- **Split:** 80% train / 20% test — **random** split (not time-based)
 
-> ⚠️ Labels are pseudo-labels (brightness-based heuristic), not human-annotated. This is suitable for a course prototype.
+> ⚠️ This is a **proof-of-concept / learning project**, not a validated production model. Two things limit the metrics: (1) pseudo-labels are heuristic, and (2) the random split over one continuous video causes temporal leakage. Treat the results as a comparative study of architectures, not a real-world accuracy claim.
 
 ---
 
 ## 🔍 Key Findings
 
-1. **CNN baseline (56.88%)** is limited because it uses only the last frame with no temporal context.
-2. **LSTM and GRU (83.13%)** are the best performers — they capture short-term motion patterns effectively.
-3. **Transformer (80.00%)** shows strong overall accuracy but fails on the `Straight` class due to class imbalance and small dataset size.
-4. **Macro F1-score** is more informative than accuracy alone for this imbalanced dataset.
+1. **The single-frame CNN baseline lags well behind** the sequence models — as expected, one frame carries no motion information.
+2. **LSTM and GRU lead** the comparison, capturing short-term motion patterns better than the other variants.
+3. **The Transformer** is competitive overall but struggles on the `Straight` class, likely due to class imbalance and the small dataset.
+4. **Macro F1-score** is more informative than raw accuracy here, given the class imbalance.
+
+> Again: these are **relative** conclusions across models sharing the same split — not absolute performance claims (see Limitations).
+
+---
+
+## ⚠️ Limitations
+
+- **Temporal leakage:** frames come from one continuous video and the split is random, so near-identical frames can land in both train and test — this inflates the reported accuracy.
+- **Heuristic labels:** brightness-based pseudo-labels approximate direction; they are not ground-truth control commands.
+- **Single-source data:** one video limits generalization; the model would not transfer to unseen environments as-is.
+- **What this project *does* show:** a clean multi-architecture comparison pipeline (CNN → RNN/LSTM/GRU → Transformer), feature extraction with a frozen MobileNetV2, and end-to-end deployment via Streamlit.
+
+**To make it production-grade:** use a time-based split across *multiple* videos, real control-command labels, and report precision/recall/F1 per class.
 
 ---
 
